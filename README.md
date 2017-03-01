@@ -16,6 +16,8 @@ After running make
 Example for sum1 program:
          ```
          ./sum1 input/input_10.txt 10
+
          ./sum1 input/input_100.txt 100
+
          ...
          ```
