@@ -13,6 +13,4 @@ files included: input_10.txt, input_100.txt, input_1k.txt, input_10k.txt, input_
 ## Running Programs
 After running `make` the code can be ran as
 
-         ```
-         ./sum1 input/input_10.txt 10
-         ```
+         ` ./sum1 input/input_10.txt 10`
