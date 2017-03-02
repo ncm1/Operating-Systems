@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <inttypes.h>
 
 int main(int bufferSize, char* buffer[])
 {
@@ -17,7 +18,7 @@ int main(int bufferSize, char* buffer[])
   }
   //fp is declared as a pointer to a file, use fopen to open the buffer parameter passed
   FILE *fp;
-  long long sum = 0;           // declare sum as long long and initialize to 0
+  uint64_t sum = 0;            // declare sum as uint64 and initialize to 0
   int max = 1;                 // declare the max as INT_MIN
   int min = atoi(buffer[2])*10;// declare the min as INT_MAX
   int mypipefd[2];
@@ -66,8 +67,8 @@ int main(int bufferSize, char* buffer[])
     }
     close(mypipe[0]);
     write(mypipe[1], &min, sizeof(min));
-    pid3 = fork();
-  }*/
+    //pid3 = fork();
+  }
 
   /*if( pid3 == 0)
   {
@@ -82,6 +83,7 @@ int main(int bufferSize, char* buffer[])
 
   else
   {
+    // Parent Process
     printf("Parent process %d\n", getpid());
 
     close(mypipe[1]);
@@ -90,13 +92,13 @@ int main(int bufferSize, char* buffer[])
     read(mypipe[0], &sum, sizeof(sum));
     printf("Max is: %d\n", max);
     printf("Min is: %d\n", min);
-    printf("Sum is: %d\n", sum);
+    //printf("Sum is: %d\n", sum);
   }
 
     //close(mypipefd[1]);
     //read(mypipefd[0], &sum, sizeof(sum));
 
-    //printf("Sum is: %d\n", sum);
+    //printf("Sum is: %"PRIu64"\n", sum);
     //fclose(fp);
     //free(numberArray);  //free up the allocated memory
 

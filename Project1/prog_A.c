@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 int main(int bufferSize, char* buffer[])
 {
@@ -29,7 +30,7 @@ int main(int bufferSize, char* buffer[])
     //printf("numberArray[%d]: %d\n", i+1,numberArray[i]);
   }
 
-  long long sum = 0;           // declare sum as long long and initialize to 0
+  uint64_t sum = 0;            // declare sum as long long and initialize to 0
   int max = numberArray[0];    // set the max as the first element
   int min = numberArray[0];    // set the min as the first element
   for(int j = 0; j < maxSize; j++)
@@ -41,7 +42,7 @@ int main(int bufferSize, char* buffer[])
     sum = sum + numberArray[j];
   }
 
-  printf("Sum is: %d\n", sum);
+  printf("Sum is: %"PRIu64"\n", sum);
   printf("Max is: %d\n", max);
   printf("Min is: %d\n", min);
 return 0;
