@@ -37,7 +37,8 @@ int main(int bufferSize, char* buffer[])
   }
 
   int   status;
-  int   mypipe[2];
+  int   vals[3];
+  int   mypipe[2], mypipe1[2], mypipe2[2];
   pid_t pid, pid1, pid2, pid3;      // declare pid's for sum, max, and min
 
 
@@ -45,54 +46,61 @@ int main(int bufferSize, char* buffer[])
   pid1 = fork();
   if(pid1 == 0)
   {
-    printf("1. Hello I'm process %d and my parent is %d\n", getpid(), getppid());
+    printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
     for(int i = 0; i < maxSize; i++)
     {
       if(max < numberArray[i])
         max = numberArray[i];
     }
-    close(mypipe[0]);
-    write(mypipe[1], &max, sizeof(max));
+    vals[0] = max;
+
+    /*Spawn the second child process */
+    pipe(mypipe1);
     pid2 = fork();
+    if( pid2 == 0)
+    {
+      printf("2. Hello I'm process %d and my parent is %d\n", getpid(), getppid());
+      min = numberArray[0];
+      for(int j = 0; j < maxSize; j++)
+      {
+        if(min > numberArray[j])
+          min = numberArray[j];
+      }
+      vals[1] = min;
+
+      /* Spawn the third child process */
+      pipe(mypipe2);
+      pid3 = fork();
+      if( pid3 == 0)
+      {
+        printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
+        for(int k = 0; k < maxSize; k++)
+        {
+          sum = sum + numberArray[k];
+        }
+        vals[2] = sum;
+        close(mypipe[0]);
+        write(mypipe[1], &vals, sizeof(vals));
+      }
+    }
+
   }
 
-  if( pid2 == 0)
-  {
-    printf("2. Hello I'm process %d and my parent is %d\n", getpid(), getppid());
-    min = numberArray[0];
-    for(int j = 0; j < maxSize; j++)
-    {
-      if(min > numberArray[j])
-        min = numberArray[j];
-    }
-    close(mypipe[0]);
-    write(mypipe[1], &min, sizeof(min));
-    //pid3 = fork();
-  }
-
-  /*if( pid3 == 0)
-  {
-    printf("3. Hello I'm process %d and my parent is %d\n", getpid(), getppid());
-    for(int k = 0; k < maxSize; k++)
-    {
-      sum = sum + numberArray[k];
-    }
-    close(mypipe[0]);
-    write(mypipe[1], &sum, sizeof(sum));
-  }*/
 
   else
   {
     // Parent Process
     printf("Parent process %d\n", getpid());
-
+    /* Close the first child pipe, and read the values */
     close(mypipe[1]);
-    read(mypipe[0], &max, sizeof(max));
-    read(mypipe[0], &min, sizeof(min));
-    read(mypipe[0], &sum, sizeof(sum));
+    read(mypipe[0], &vals, sizeof(vals));
+    max = vals[0];
+    min = vals[1];
+    sum = vals[2];
+
     printf("Max is: %d\n", max);
     printf("Min is: %d\n", min);
-    //printf("Sum is: %d\n", sum);
+    printf("Sum is: %d\n", sum);
   }
 
     //close(mypipefd[1]);
