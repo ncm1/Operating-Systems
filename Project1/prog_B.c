@@ -55,7 +55,6 @@ int main(int bufferSize, char* buffer[])
     vals[0] = max;
 
     /*Spawn the second child process */
-    pipe(mypipe1);
     pid2 = fork();
     if( pid2 == 0)
     {
@@ -69,7 +68,6 @@ int main(int bufferSize, char* buffer[])
       vals[1] = min;
 
       /* Spawn the third child process */
-      pipe(mypipe2);
       pid3 = fork();
       if( pid3 == 0)
       {
@@ -100,7 +98,7 @@ int main(int bufferSize, char* buffer[])
 
     printf("Max is: %d\n", max);
     printf("Min is: %d\n", min);
-    printf("Sum is: %d\n", sum);
+    printf("Sum is: %"PRIu64"\n", sum);
   }
 
     //close(mypipefd[1]);
