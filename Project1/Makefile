@@ -1,3 +1,3 @@
 project1:
-	g++ writeTextFiles.cpp -o writeFiles
-	gcc sum1.c -o sum1
+	gcc prog_B.c -o prog_B
+	gcc prog_A.c -o prog_A
