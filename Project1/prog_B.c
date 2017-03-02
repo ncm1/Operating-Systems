@@ -5,6 +5,10 @@
 #include <sys/wait.h>
 #include <inttypes.h>
 
+int getMax(int [], int);
+int getMin(int [], int);
+int getSum(int [], int);
+
 int main(int bufferSize, char* buffer[])
 {
   //make sure that the program is run with proper input parameters
@@ -18,9 +22,9 @@ int main(int bufferSize, char* buffer[])
   }
   //fp is declared as a pointer to a file, use fopen to open the buffer parameter passed
   FILE *fp;
-  uint64_t sum = 0;            // declare sum as uint64 and initialize to 0
-  int max = 1;                 // declare the max as INT_MIN
-  int min = atoi(buffer[2])*10;// declare the min as INT_MAX
+  uint64_t sum = 0;             // declare sum as uint64 and initialize to 0
+  int max = 1;                  // declare the max as INT_MIN
+  int min = atoi(buffer[2])*10; // declare the min as INT_MAX
   int mypipefd[2];
 
   fp = fopen(buffer[1], "r");
@@ -38,58 +42,44 @@ int main(int bufferSize, char* buffer[])
 
   int   status;
   int   vals[3];
-  int   mypipe[2], mypipe1[2], mypipe2[2];
+  int   mypipe[2];
   pid_t pid, pid1, pid2, pid3;      // declare pid's for sum, max, and min
 
-
+  //Open up a pipe for communication between the children
   pipe(mypipe);
+  /* Spawn the child process */
   pid1 = fork();
   if(pid1 == 0)
   {
     printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
-    for(int i = 0; i < maxSize; i++)
-    {
-      if(max < numberArray[i])
-        max = numberArray[i];
-    }
-    vals[0] = max;
+    vals[0] = getMax(numberArray,maxSize);
 
     /*Spawn the second child process */
     pid2 = fork();
     if( pid2 == 0)
     {
-      printf("2. Hello I'm process %d and my parent is %d\n", getpid(), getppid());
-      min = numberArray[0];
-      for(int j = 0; j < maxSize; j++)
-      {
-        if(min > numberArray[j])
-          min = numberArray[j];
-      }
-      vals[1] = min;
+      printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
+      vals[1] = getMin(numberArray,maxSize);
 
       /* Spawn the third child process */
       pid3 = fork();
       if( pid3 == 0)
       {
         printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
-        for(int k = 0; k < maxSize; k++)
-        {
-          sum = sum + numberArray[k];
-        }
-        vals[2] = sum;
+        vals[2] = getSum(numberArray, maxSize);
+        //Write the results for the parent process to read
         close(mypipe[0]);
         write(mypipe[1], &vals, sizeof(vals));
       }
     }
-
   }
 
 
   else
   {
-    // Parent Process
-    printf("Parent process %d\n", getpid());
-    /* Close the first child pipe, and read the values */
+    /* Parent Process */
+    printf("Hello I'm process %d and my parent is %d\n", getpid(), getppid());
+    // Close the first child pipe, and read the values
     close(mypipe[1]);
     read(mypipe[0], &vals, sizeof(vals));
     max = vals[0];
@@ -99,18 +89,53 @@ int main(int bufferSize, char* buffer[])
     printf("Max is: %d\n", max);
     printf("Min is: %d\n", min);
     printf("Sum is: %"PRIu64"\n", sum);
+
+    fclose(fp);
+    free(numberArray);  //free up the allocated memory
   }
 
-    //close(mypipefd[1]);
-    //read(mypipefd[0], &sum, sizeof(sum));
-
-    //printf("Sum is: %"PRIu64"\n", sum);
-    //fclose(fp);
-    //free(numberArray);  //free up the allocated memory
-
+wait(&status);
 printf("Ending process %d with parent %d\n", getpid(), getppid());
 return 0;
 
+}
+/* PRECONDITIONS: num is an ARRAY of INTEGERS and maxsize is an ARRAY
+   PRECONDITIONS: Returns the maximum of the INTEGERS in ARRAY num[]
+*/
+int getMax(int num[], int maxSize)
+{
+  int max = num[0];
+  for(int i = 0; i < maxSize; i++)
+  {
+    if(max < num[i])
+      max = num[i];
+  }
+  return max;
+}
+/* PRECONDITIONS: num is an ARRAY of INTEGERS and maxsize is an ARRAY
+   PRECONDITIONS: Returns the minimum of the INTEGERS in ARRAY num[]
+*/
+int getMin(int num[], int maxSize)
+{
+  int min = num[0];
+  for(int i = 0; i < maxSize; i++)
+  {
+    if(min > num[i])
+      min = num[i];
+  }
+  return min;
+}
+/* PRECONDITIONS: num is an ARRAY of INTEGERS and maxsize is an ARRAY
+   PRECONDITIONS: Returns the sum of the INTEGERS in ARRAY num[]
+*/
+int getSum(int num[], int maxSize)
+{
+  int sum = 0;
+  for(int i = 0; i < maxSize; i++)
+  {
+    sum = sum + num[i];
+  }
+  return sum;
 }
 
 /*References:
