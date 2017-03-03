@@ -20,17 +20,17 @@ int main(int bufferSize, char* buffer[])
     printf("Ending program\n");
     return 0;
   }
-  //fp is declared as a pointer to a file, use fopen to open the buffer parameter passed
-  FILE *fp;
+
+
   uint64_t sum = 0;             // declare sum as uint64 and initialize to 0
   int max = 1;                  // declare the max as INT_MIN
   int min = atoi(buffer[2])*10; // declare the min as INT_MAX
-  int mypipefd[2];
 
-  fp = fopen(buffer[1], "r");
-  int maxSize = 0;           //declare and initialize maxSize for array
-  maxSize = atoi(buffer[2]); //the max size of the array converted to integer
-  int *numberArray;          //declaring a pointer variable to point to allocated heap space
+  FILE *fp;                     // fp is declared as a pointer to a file,
+  fp = fopen(buffer[1], "r");   // use fopen to open the buffer parameter passed
+  int maxSize = 0;              // declare and initialize maxSize for array
+  maxSize = atoi(buffer[2]);    // the max size of the array converted to integer
+  int *numberArray;             // declaring a pointer variable to point to allocated heap space
 
   //dynamically allocating memory, because C doesn't spoil us like C++
   numberArray = (int*)malloc(sizeof(int)*maxSize);
@@ -40,9 +40,9 @@ int main(int bufferSize, char* buffer[])
     fscanf(fp, "%d", &numberArray[l]);
   }
 
-  int   status;
-  int   vals[3];
-  int   mypipe[2];
+  int   status;                     // integer status for waiting for pids to finish
+  int   vals[3];                    // integer array storing the results of min, max, and sum
+  int   mypipe[2];                  // pipe for communication between the children processes
   pid_t pid, pid1, pid2, pid3;      // declare pid's for sum, max, and min
 
   //Open up a pipe for communication between the children
