@@ -49,8 +49,8 @@ for(int j = 2; j < input; j++){
   A[j - 2] = true;
 }//end for
 
-int sqrtPart;                    //integer sqrtPart declared
-sqrtPart = (int)sqrt(input);     //store the integer part of sqrt(input)
+int sqrtPart;                        //integer sqrtPart declared
+sqrtPart = (int)sqrt(input) + 1;     //store the integer part of sqrt(input)
 
 int k;
 int l = 0;
