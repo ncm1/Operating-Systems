@@ -29,6 +29,9 @@ void make_transaction()
 void take_a_seat()
 {
   printf("Customer %u has been seated\n", (int)pthread_self());
+  int numOfSeats;
+  sem_getvalue(&seating, &numOfSeats); //numOfSeats = seating
+  printf("There are %d seats avaliable\n", numOfSeats);
 }
 
 void return_home()
@@ -45,12 +48,10 @@ void bank_client()
     int numOfSeats;
     sem_getvalue(&seating, &numOfSeats); //numOfSeats = seating
 
-    printf("There are %d seats avaliable\n", numOfSeats);
-
     if( numOfSeats > 0 )
     {
       sem_wait(&seating); //if there is no seating block transaction
-      //take_a_seat();      //after seating is avaliable
+      take_a_seat();      //after seating is avaliable
 
       sem_wait(&serviceDesk); //if there is no service desk block transaction
       make_transaction();   //make transaction after seat and desk are avaliable
