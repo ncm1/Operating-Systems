@@ -114,8 +114,8 @@ for(int j = 0; j < numberOfThreads; j++)
 }
 for(int k = 0; k < numberOfThreads; k++)
 {
-    threadCreate = pthread_join(&threads[k], &threadStatus);
+    threadCreate = pthread_join(threads[k], &threadStatus);
 }
-  printf("I'm here...\n");
+  printf("Ending Bank Simulation...\n");
   return 0;
 }
