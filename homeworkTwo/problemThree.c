@@ -68,8 +68,6 @@ void bank_client()
 
 int main(int argc, char* argv[])
 {
-  sem_init(&seating, 0, K_Seats); //initialize semaphore to 4 avaliable seats
-  sem_init(&serviceDesk, 0, 1);   //initializes semaphore to one avaliable Desk
 
   //////////////////////////////////////////////////////////////////////
  //           Verify the input is as specified in README             //
@@ -101,6 +99,8 @@ if(!(input > 4))
 /*                                         /
           Begin Bank Simulation here
 /                                         */
+sem_init(&seating, 0, K_Seats); //initialize semaphore to 4 avaliable seats
+sem_init(&serviceDesk, 0, 1);   //initializes semaphore to one avaliable Desk
 
 int numberOfThreads = input;
 void *threadStatus;
@@ -108,6 +108,7 @@ int  threadCreate;
 
 pthread_t threads[numberOfThreads];
 
+printf("Starting Bank Simulation with %d Customers", numberOfThreads);
 
 for(int j = 0; j < numberOfThreads; j++)
 {
